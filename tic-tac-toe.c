@@ -19,6 +19,7 @@ void inicializa_velha(){
 void imprime_velha(){
     int l,c;
     //imprime jogo na tela
+    system("cls");
     printf("\n\t 0   1   2\n\n");
     for(l = 0; l < 3; l++){
         for(c = 0; c < 3; c++){
@@ -84,9 +85,74 @@ int jogada_usuario(int lin,int col, char jog){
     };
 };
 
+int verifica_ganhador(char jog) {
+    int l,c,d,ds;
+    l = ganhou_linhas();
+    c = ganhou_colunas();
+    d = ganhou_diagonal_principal();
+    ds = ganhou_diagonal_secundaria();
+
+    if(l ==1 || c ==1 || d ==1 || ds ==1)
+        return 1;
+    else
+        return 0;
+};
+
+int ganhou_linhas() {
+    int i,j, cont=1;
+    for(i = 0; i < 3; i++){
+        for(j = 0; j < 2; j++){
+            if(jogo[i][j] == jogo[i][j+1])
+                cont++;
+        }
+        if(cont == 3)
+            return 1;
+        cont =1;
+    }
+    return 0;
+};
+
+int ganhou_colunas() {
+    int i,j, cont=1;
+    for(i = 0; i < 3; i++){
+        for(j = 0; j < 2; j++){
+            if(jogo[j][i] == jogo[j+1][i])
+                cont++;
+        }
+        if(cont == 3)
+            return 1;
+        cont =1;
+    }
+    return 0;
+};
+
+int ganhou_diagonal_principal() {
+    int i, cont=1;
+    for(i = 0; i < 2; i++){
+        if(jogo[i][i] == jogo[i+1][i+1])
+            cont++;
+    }
+    if(cont == 3)
+        return 1;
+    else
+        return 0;
+};
+
+int ganhou_diagonal_secundaria() {
+    int i, cont=1;
+    for(i = 0; i < 2; i++){
+        if(jogo[i][3-i-1] == jogo[i][3-i-1])
+            cont++;
+    }
+    if(cont == 3)
+        return 1;
+    else
+        return 0;
+};
+
 
 int main () {
-    int lin,col, M;
+    int lin,col, M,ganhador=0;
     char letra,jogador1,jogador2;
 
     inicializa_velha();
@@ -96,20 +162,23 @@ int main () {
     M = menu();
 
     if(M == 2)
-        escolha_simb(&jogador1, &jogador2);
+    escolha_simb(&jogador1, &jogador2);
 
-    printf("\nJOGADOR TESTE 1 : %c", jogador1);
-    printf("\nJOGADOR TESTE 2 : %c", jogador2);
-
+    do{
     printf("\nDigite a linha que deseja jogar: ");
     scanf("%d", &lin);
-    printf("\nDigite a linha que deseja jogar: ");
+    printf("\nDigite a coluna que deseja jogar: ");
     scanf("%d", &col);
     printf("\nDigite X ou O(letra): ");
     scanf(" %c", &letra);
     letra = toupper(letra);
 
     jogada_usuario(lin,col,letra);
+    imprime_velha();
+
+    ganhador += verifica_ganhador(letra);
+
+    }while(ganhador != 3);
 
     return 0;
 }
