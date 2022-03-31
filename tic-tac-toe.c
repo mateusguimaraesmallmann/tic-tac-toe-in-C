@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 //variaveis globais (review)
 char jogo[3][3];
-int nivel;
+int nivel,verif=0,ganhador=0;
 
 void inicializa_velha(){
     int l,c;
@@ -86,68 +87,46 @@ int jogada_usuario(int lin,int col, char jog){
 };
 
 int verifica_ganhador(char jog) {
-    int l,c,d,ds;
-    l = ganhou_linhas();
-    c = ganhou_colunas();
-    d = ganhou_diagonal_principal();
-    ds = ganhou_diagonal_secundaria();
 
-    if(l ==1 || c ==1 || d ==1 || ds ==1)
+    ganhou_linhas(jog);
+    ganhou_colunas(jog);
+    ganhou_diagonal_principal(jog);
+    ganhou_diagonal_secundaria(jog);
+    if(verif == 1){
         return 1;
-    else
+    }else{
         return 0;
+    }
 };
 
-int ganhou_linhas() {
-    int i,j, cont=1;
-    for(i = 0; i < 3; i++){
-        for(j = 0; j < 2; j++){
-            if(jogo[i][j] == jogo[i][j+1])
-                cont++;
-        }
-        if(cont == 3)
-            return 1;
-        cont =1;
-    }
-    return 0;
+void ganhou_linhas(char jog){
+    if(jogo[0][0]== jog && jogo[0][1]== jog && jogo[0][2]== jog || jogo[1][0]== jog && jogo[1][1]== jog && jogo[1][2]== jog ||
+       jogo[2][0]== jog && jogo[2][1]== jog && jogo[2][2]== jog){
+        verif+=1;
+    }else
+        verif=0;
 };
 
-int ganhou_colunas() {
-    int i,j, cont=1;
-    for(i = 0; i < 3; i++){
-        for(j = 0; j < 2; j++){
-            if(jogo[j][i] == jogo[j+1][i])
-                cont++;
-        }
-        if(cont == 3)
-            return 1;
-        cont =1;
-    }
-    return 0;
+void ganhou_colunas(char jog) {
+    if(jogo[0][0]== jog && jogo[1][0]== jog && jogo[2][0]== jog || jogo[0][1]== jog && jogo[1][1]== jog && jogo[2][1]== jog ||
+       jogo[0][2]== jog && jogo[1][2]== jog && jogo[2][2]== jog){
+        verif=1;
+    }else
+        verif=0;
 };
 
-int ganhou_diagonal_principal() {
-    int i, cont=1;
-    for(i = 0; i < 2; i++){
-        if(jogo[i][i] == jogo[i+1][i+1])
-            cont++;
-    }
-    if(cont == 3)
-        return 1;
-    else
-        return 0;
+void ganhou_diagonal_principal(char jog) {
+    if(jogo[0][0]== jog && jogo[1][1]== jog && jogo[2][2]== jog){
+        verif=1;
+    }else
+        verif=0;
 };
 
-int ganhou_diagonal_secundaria() {
-    int i, cont=1;
-    for(i = 0; i < 2; i++){
-        if(jogo[i][3-i-1] == jogo[i+1][3-i-2])
-            cont++;
-    }
-    if(cont == 3)
-        return 1;
-    else
-        return 0;
+void ganhou_diagonal_secundaria(char jog) {
+    if(jogo[0][2]== jog && jogo[1][1]== jog && jogo[2][0]== jog){
+        verif=1;
+    }else
+        verif=0;
 };
 
 int lin_col(int *lin,int *col){
@@ -162,34 +141,103 @@ int lin_col(int *lin,int *col){
     *col = y;
 };
 
+void jogada_computador(char jog, int nivel){
+    if(nivel == 1)
+        jogada_basica(jog);
+    if(nivel == 2)
+        jogada_intermediaria(jog);
+    if(nivel == 3)
+        jogada_avancado(jog);
+};
+
+void jogada_basica(char jog){
+    int l,c;
+
+    srand(time(NULL));
+    do{
+    l = rand()%3;
+    c = rand()%3;
+    }while(jogo[l][c] != ' ');
+    jogo[l][c] = jog;
+};
+
+void jogada_intermediaria(char jog){
+    int l,c;
+    srand(time(NULL));
+    l = rand()%3;
+    c = rand()%3;
+
+    if(jogo[0][0]!= jog && jogo[0][1]!= jog ||jogo[1][0]!= jog && jogo[1][1]!= jog||jogo[2][0]!= jog && jogo[2][1]!= jog){
+        jogo[l][2] = jog;
+    }else if(jogo[0][1]!= jog && jogo[0][2]!= jog||jogo[1][1]!= jog && jogo[1][2]!= jog||jogo[2][1]!= jog && jogo[2][2]!= jog){
+        jogo[l][0]=jog;
+    }
+    else
+        jogo[l][c]=jog;
+};
+
+void jogada_avancado(char jog){
+    int l,c;
+    srand(time(NULL));
+    l = rand()%3;
+    c = rand()%3;
+    //linha
+    if(jogo[0][0]!= jog && jogo[0][1]!= jog ||jogo[1][0]!= jog && jogo[1][1]!= jog||jogo[2][0]!= jog && jogo[2][1]!= jog){
+        jogo[l][2] = jog;
+    }else if(jogo[0][0]!= jog && jogo[1][0]!= jog ||jogo[0][1]!= jog && jogo[1][1]!= jog||jogo[0][2]!= jog && jogo[1][2]!= jog)
+        jogo[2][c] = jog;
+    else
+        jogo[l][c]=jog;
+};
 
 int main () {
-    int lin,col,vez=1,M,controle=1,ganhador=0;
-    char letra,resp,jog1,jog2;
+    int lin,col,vez=1,M;
+    char resp,jog1,jog2;
 
     inicializa_velha();
     imprime_velha();
     M = menu();
-    if(M == 2)
-        escolha_simb(&jog1, &jog2);
+    escolha_simb(&jog1, &jog2);
     do{
         do{
+            //jogada computador
+            if(M == 1){
+                if(vez == 1){
+                printf("\nJogador %c\n",jog1);
+                lin_col(&lin,&col);
+                jogada_usuario(lin,col,jog1);
+                vez=2;
+                }else if(vez ==2){
+                printf("\nComputador...jogando");
+                    sleep(2);
+                jogada_computador(jog2,nivel);
+                vez=1;
+                }
+                }
+            //jogada com outro usuario
+            if(M == 2){
             if(vez == 1){
-                printf("\nJogador %s\n",&jog1);
+                printf("\nJogador %c\n",jog1);
                 lin_col(&lin,&col);
                 jogada_usuario(lin,col,jog1);
                 system("cls");
                 vez=2;
             }else{
-                printf("\nJogador % s\n",&jog2);
+                printf("\nJogador %c\n",jog2);
                 lin_col(&lin,&col);
                 jogada_usuario(lin,col,jog2);
                 system("cls");
                 vez=1;
             }
+            }
             imprime_velha();
-            ganhador += verifica_ganhador(letra);
-        }while(ganhador != 3);
+
+            if(vez == 1)
+                ganhador = verifica_ganhador(jog1);
+            else
+                ganhador = verifica_ganhador(jog2);
+
+        }while(ganhador != 1);
         printf("\nDeseja jogar novamente? [S-N]\n");
         scanf("%c", &resp);
     }while(resp == 's');
