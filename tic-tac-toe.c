@@ -141,7 +141,7 @@ int ganhou_diagonal_principal() {
 int ganhou_diagonal_secundaria() {
     int i, cont=1;
     for(i = 0; i < 2; i++){
-        if(jogo[i][3-i-1] == jogo[i][3-i-1])
+        if(jogo[i][3-i-1] == jogo[i+1][3-i-2])
             cont++;
     }
     if(cont == 3)
@@ -150,35 +150,48 @@ int ganhou_diagonal_secundaria() {
         return 0;
 };
 
+int lin_col(int *lin,int *col){
+    int x, y;
+
+    printf("\nDigite a linha que deseja jogar: ");
+    scanf("%d", &x);
+    printf("\nDigite a coluna que deseja jogar: ");
+    scanf("%d", &y);
+
+    *lin = x;
+    *col = y;
+};
+
 
 int main () {
-    int lin,col, M,ganhador=0;
-    char letra,jogador1,jogador2;
+    int lin,col,vez=1,M,controle=1,ganhador=0;
+    char letra,resp,jog1,jog2;
 
     inicializa_velha();
-
     imprime_velha();
-
     M = menu();
-
     if(M == 2)
-    escolha_simb(&jogador1, &jogador2);
-
+        escolha_simb(&jog1, &jog2);
     do{
-    printf("\nDigite a linha que deseja jogar: ");
-    scanf("%d", &lin);
-    printf("\nDigite a coluna que deseja jogar: ");
-    scanf("%d", &col);
-    printf("\nDigite X ou O(letra): ");
-    scanf(" %c", &letra);
-    letra = toupper(letra);
-
-    jogada_usuario(lin,col,letra);
-    imprime_velha();
-
-    ganhador += verifica_ganhador(letra);
-
-    }while(ganhador != 3);
-
+        do{
+            if(vez == 1){
+                printf("\nJogador %s\n",&jog1);
+                lin_col(&lin,&col);
+                jogada_usuario(lin,col,jog1);
+                system("cls");
+                vez=2;
+            }else{
+                printf("\nJogador % s\n",&jog2);
+                lin_col(&lin,&col);
+                jogada_usuario(lin,col,jog2);
+                system("cls");
+                vez=1;
+            }
+            imprime_velha();
+            ganhador += verifica_ganhador(letra);
+        }while(ganhador != 3);
+        printf("\nDeseja jogar novamente? [S-N]\n");
+        scanf("%c", &resp);
+    }while(resp == 's');
     return 0;
 }
