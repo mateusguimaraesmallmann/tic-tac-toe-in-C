@@ -7,7 +7,7 @@
 
 //variaveis globais (review)
 char jogo[3][3];
-int nivel,verif=0,ganhador=0;
+int nivel,verif=0;
 
 void inicializa_velha(){
     int l,c;
@@ -79,7 +79,7 @@ int jogada_usuario(int lin,int col, char jog){
         jogo[lin][col] = jog;
         return 0;
     }
-    if (lin < 0 || lin > 2 || col < 0 || col > 2){
+    if (lin < 0 || lin > 2 && col < 0 || col > 2){
         return 1;
     }else {
         if (jogo[lin][col] != ' ')
@@ -249,55 +249,109 @@ void jogada_avancado(char jog){
 }
 
 int main () {
-    int lin,col,jogadas=9,vez=1,M;
+    int lin,col,jogadas=9,vez=1,men,gc=0,ganhador=0,valjog;
     char resp,jog1,jog2;
 
-    inicializa_velha();
-    imprime_velha();
-    M = menu();
-    escolha_simb(&jog1, &jog2);
     do{
+        inicializa_velha();
+        imprime_velha();
+        men = menu();
+        escolha_simb(&jog1, &jog2);
+        system("cls");
+        imprime_velha();
         do{
-            //jogada computador
-            if(M == 1){
+            //jogada com computador
+            if(men == 1){
                 if(vez == 1){
-                printf("\nJogador %c\n",jog1);
-                lin_col(&lin,&col);
-                jogada_usuario(lin,col,jog1);
-                vez=2;
+                    printf("\nJogador %c\n",jog1);
+                    do{
+                        lin_col(&lin,&col);
+                        valjog = jogada_usuario(lin,col,jog1);
+                        if(valjog != 0){
+                            printf("\nJogada invalida...");
+                            sleep(1);
+                            system("cls");
+                            imprime_velha();
+                            printf("\nJogador %c\n",jog1);
+                        }
+                    }while(valjog != 0);
+                    ganhador = verifica_ganhador(jog1);
+                    jogadas--;
+                    printf("\nTeste jogadas...%d", jogadas);
+                        sleep(1);
+                    vez=2;
+                    gc=1;
                 }else if(vez ==2){
-                printf("\nComputador...jogando");
+                    printf("\nComputador...jogando");
                     sleep(2);
-                jogada_computador(jog2,nivel);
-                vez=1;
+                    jogada_computador(jog2,nivel);
+                    jogadas--;
+                    vez=1;
+                    ganhador = verifica_ganhador(jog2);
+                    gc=2;
                 }
-                }
+            }
             //jogada com outro usuario
-            if(M == 2){
+            if(men == 2){
             if(vez == 1){
                 printf("\nJogador %c\n",jog1);
-                lin_col(&lin,&col);
-                jogada_usuario(lin,col,jog1);
+                do{
+                    lin_col(&lin,&col);
+                    valjog = jogada_usuario(lin,col,jog1);
+                    if(valjog != 0){
+                        printf("\nJogada invalida...");
+                        sleep(1);
+                        system("cls");
+                        imprime_velha();
+                        printf("\nJogador %c\n",jog1);
+                    }
+                }while(valjog != 0);
                 system("cls");
+                jogadas--;
                 vez=2;
+                ganhador = verifica_ganhador(jog1);
+                gc=1;
             }else{
                 printf("\nJogador %c\n",jog2);
-                lin_col(&lin,&col);
-                jogada_usuario(lin,col,jog2);
+                do{
+                    lin_col(&lin,&col);
+                    valjog = jogada_usuario(lin,col,jog2);
+                    if(valjog != 0){
+                        printf("\nJogada invalida...");
+                        sleep(1);
+                        system("cls");
+                        imprime_velha();
+                        printf("\nJogador %c\n",jog2);
+                    }
+                }while(valjog != 0);
                 system("cls");
+                jogadas--;
                 vez=1;
+                ganhador = verifica_ganhador(jog2);
+                gc=2;
+                }
             }
-            }
+
             imprime_velha();
 
-            if(vez == 1)
-                ganhador = verifica_ganhador(jog1);
-            else
-                ganhador = verifica_ganhador(jog2);
-
-        }while(ganhador != 1);
+        printf("TESTE JOGADAS ANTES DE CAIR NO WHILE DE GANHADOR || JOGADAS = 0...%d", jogadas);
+        sleep(1);
+        }while(ganhador != 1 || jogadas != 0);
+        if(jogadas == 0)
+            printf("\nQue pena! Ninguem ganhou!");
+        if(gc == 1)
+            printf("\nParabens!!! O ganhador foi % c", jog1);
+        else
+            printf("\nParabens!!! O ganhador foi % c", jog2);
         printf("\nDeseja jogar novamente? [S-N]\n");
-        scanf("%c", &resp);
+        scanf(" %c", &resp);
+        if(resp == 's'){
+            verif=0;
+            jogadas=9;
+            vez=1;
+            gc=0;
+            ganhador=0;
+        }
     }while(resp == 's');
     return 0;
 }
