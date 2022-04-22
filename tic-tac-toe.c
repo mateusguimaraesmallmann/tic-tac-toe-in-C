@@ -69,7 +69,7 @@ int menu()
     return i;
 }
 
-void escolha_simb(char *jog1, char *jog2, char *nome_jog1[50], char *nome_jog2[50])
+void escolha_simb(char *jog1, char *jog2, char nome_jog1[50], char nome_jog2[50])
 {
     char letra1, letra2, nome1[50], nome2[50];
 
@@ -78,8 +78,8 @@ void escolha_simb(char *jog1, char *jog2, char *nome_jog1[50], char *nome_jog2[5
     scanf("%s", nome1);
     printf("\nNome do jogador 2: ");
     scanf("%s", nome2);
-    *nome_jog1 = nome1;
-    *nome_jog2 = nome2;
+    strcpy(nome_jog1, nome1);
+    strcpy(nome_jog2, nome2);
 
     // simbolos dos jogadores
     printf("\nDefina quem e X ou O(letra)");
@@ -305,7 +305,7 @@ int main()
         inicializa_velha();
         imprime_velha();
         men = menu();
-        escolha_simb(&jog1, &jog2, &nome_jog1, &nome_jog2);
+        escolha_simb(&jog1, &jog2, nome_jog1, nome_jog2);
         system("cls");
         imprime_velha();
         do
