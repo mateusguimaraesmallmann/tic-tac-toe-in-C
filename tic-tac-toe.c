@@ -69,15 +69,24 @@ int menu()
     return i;
 }
 
-void escolha_simb(char *jog1, char *jog2)
-{ 
-    char letra1, letra2;
+void escolha_simb(char *jog1, char *jog2, char *nome_jog1[50], char *nome_jog2[50])
+{
+    char letra1, letra2, nome1[50], nome2[50];
 
+    // nomes dos jogadores
+    printf("\nNome do jogador 1: ");
+    scanf("%s", nome1);
+    printf("\nNome do jogador 2: ");
+    scanf("%s", nome2);
+    *nome_jog1 = nome1;
+    *nome_jog2 = nome2;
+
+    // simbolos dos jogadores
     printf("\nDefina quem e X ou O(letra)");
-    printf("\nJogador 1 : ");
+    printf("\nJogador %s: ", nome1);
     scanf(" %c", &letra1);
     letra1 = toupper(letra1);
-    printf("\nJogador 2 : ");
+    printf("\nJogador %s: ", nome2);
     scanf(" %c", &letra2);
     letra2 = toupper(letra2);
     *jog1 = letra1;
@@ -288,7 +297,7 @@ void jogada_avancado(char jog)
 int main()
 {
     int lin, col, jogadas = 9, vez = 1, men, gc = 0, ganhador = 0, valjog;
-    char resp, jog1, jog2;
+    char resp, jog1, jog2, nome_jog1[50], nome_jog2[50];
     bool controle = true;
 
     do
@@ -296,7 +305,7 @@ int main()
         inicializa_velha();
         imprime_velha();
         men = menu();
-        escolha_simb(&jog1, &jog2);
+        escolha_simb(&jog1, &jog2, &nome_jog1, &nome_jog2);
         system("cls");
         imprime_velha();
         do
@@ -306,7 +315,7 @@ int main()
             {
                 if (vez == 1)
                 {
-                    printf("\nJogador %c\n", jog1);
+                    printf("\nJogador %s\n", nome_jog1);
                     do
                     {
                         lin_col(&lin, &col);
@@ -341,7 +350,7 @@ int main()
             {
                 if (vez == 1)
                 {
-                    printf("\nJogador %c\n", jog1);
+                    printf("\nJogador %s\n", nome_jog1);
                     do
                     {
                         lin_col(&lin, &col);
@@ -352,7 +361,7 @@ int main()
                             sleep(1);
                             system("cls");
                             imprime_velha();
-                            printf("\nJogador %c\n", jog1);
+                            printf("\nJogador %s\n", nome_jog1);
                         }
                     } while (valjog != 0);
                     system("cls");
@@ -363,7 +372,7 @@ int main()
                 }
                 else
                 {
-                    printf("\nJogador %c\n", jog2);
+                    printf("\nJogador %s\n", nome_jog2);
                     do
                     {
                         lin_col(&lin, &col);
@@ -374,7 +383,7 @@ int main()
                             sleep(1);
                             system("cls");
                             imprime_velha();
-                            printf("\nJogador %c\n", jog2);
+                            printf("\nJogador %s\n", nome_jog2);
                         }
                     } while (valjog != 0);
                     system("cls");
@@ -405,9 +414,9 @@ int main()
         else
         {
             if (gc == 1)
-                printf("\nParabens!!! O ganhador foi % c", jog1);
+                printf("\nParabens!!! O ganhador foi %s", nome_jog1);
             else
-                printf("\nParabens!!! O ganhador foi % c", jog2);
+                printf("\nParabens!!! O ganhador foi %s", nome_jog2);
         }
         printf("\nDeseja jogar novamente? [S-N]\n");
         scanf(" %c", &resp);
