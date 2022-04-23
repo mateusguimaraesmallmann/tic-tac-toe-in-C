@@ -69,17 +69,25 @@ int menu()
     return i;
 }
 
-void escolha_simb(char *jog1, char *jog2, char nome_jog1[50], char nome_jog2[50])
+void escolha_simb(char *jog1, char *jog2, char nome_jog1[50], char nome_jog2[50], int *menu)
 {
     char letra1, letra2, nome1[50], nome2[50];
 
     // nomes dos jogadores
     printf("\nNome do jogador 1: ");
     scanf("%s", nome1);
-    printf("\nNome do jogador 2: ");
-    scanf("%s", nome2);
     strcpy(nome_jog1, nome1);
-    strcpy(nome_jog2, nome2);
+
+    if (*menu == 1)
+    {
+        strcpy(nome2, "Computador");
+    }
+    else
+    {
+        printf("\nNome do jogador 2: ");
+        scanf("%s", nome2);
+        strcpy(nome_jog2, nome2);
+    }
 
     // simbolos dos jogadores
     printf("\nDefina quem e X ou O(letra)");
@@ -294,6 +302,38 @@ void jogada_avancado(char jog)
     jogo[l][c] = jog;
 }
 
+int grava_infos_jogadores(char nome_jog1[50], char *simb_1, char nome_jog2[50], char *simb_2)
+{
+    char texto[106] = "", infos1[53] = "", infos2[53] = "";
+    int tam = 0;
+
+    FILE *ptr_arquivo;
+    ptr_arquivo = fopen("infos_jogadores.txt", "a");
+
+    if (ptr_arquivo == NULL)
+    {
+        printf("\nOcorreu um erro ao tentar gravar informações\n");
+        return 0;
+    }
+
+    strcat(infos1, nome_jog1);
+    strcat(infos1, ";");
+    strcat(infos1, simb_1);
+    strcat(infos1, ";");
+
+    strcat(infos2, nome_jog2);
+    strcat(infos2, ";");
+    strcat(infos2, simb_2);
+    strcat(infos2, ";\n");
+
+    strcat(texto, infos1);
+    strcat(texto, infos2);
+    fprintf(ptr_arquivo, "%s", texto);
+
+    fclose(ptr_arquivo);
+    return 1;
+}
+
 int main()
 {
     int lin, col, jogadas = 9, vez = 1, men, gc = 0, ganhador = 0, valjog;
@@ -305,9 +345,15 @@ int main()
         inicializa_velha();
         imprime_velha();
         men = menu();
-        escolha_simb(&jog1, &jog2, nome_jog1, nome_jog2);
+        escolha_simb(&jog1, &jog2, nome_jog1, nome_jog2, &men);
         system("cls");
         imprime_velha();
+
+        if (men == 1)
+            grava_infos_jogadores(nome_jog1, &jog1, "Computador", &jog2);
+        else
+            grava_infos_jogadores(nome_jog1, &jog1, nome_jog2, &jog2);
+
         do
         {
             // jogada com computador
@@ -372,7 +418,7 @@ int main()
                 }
                 else
                 {
-                    printf("\nJogador %s\n", nome_jog2);
+                    printf("\nJogador %c\n", jog2);
                     do
                     {
                         lin_col(&lin, &col);
@@ -383,7 +429,7 @@ int main()
                             sleep(1);
                             system("cls");
                             imprime_velha();
-                            printf("\nJogador %s\n", nome_jog2);
+                            printf("\nJogador %c\n", jog2);
                         }
                     } while (valjog != 0);
                     system("cls");
