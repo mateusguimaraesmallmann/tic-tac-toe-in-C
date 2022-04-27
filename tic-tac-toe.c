@@ -5,9 +5,17 @@
 #include <time.h>
 #include <stdbool.h>
 
+typedef struct
+{
+    int partida;
+    char JogVelha[3][3];
+    char resultado;
+} Partida;
+
 // variaveis globais
 char jogo[3][3];
 int nivel, verif = 0;
+Partida p;
 
 void inicializa_velha()
 {
@@ -308,11 +316,19 @@ int grava_infos_jogadores(char nome_jog1[50], char *simb_1, char nome_jog2[50], 
     int tam = 0;
 
     FILE *ptr_arquivo;
+<<<<<<< Updated upstream
     ptr_arquivo = fopen("infos_jogadores.txt", "a");
 
     if (ptr_arquivo == NULL)
     {
         printf("\nOcorreu um erro ao tentar gravar informações\n");
+=======
+    ptr_arquivo = fopen("infos_jogadores.txt", "a+");
+
+    if (ptr_arquivo == NULL)
+    {
+        printf("\nOcorreu um erro ao tentar gravar informacoes\n");
+>>>>>>> Stashed changes
         return 0;
     }
 
@@ -334,9 +350,52 @@ int grava_infos_jogadores(char nome_jog1[50], char *simb_1, char nome_jog2[50], 
     return 1;
 }
 
+<<<<<<< Updated upstream
 int main()
 {
     int lin, col, jogadas = 9, vez = 1, men, gc = 0, ganhador = 0, valjog;
+=======
+int cria_binario()
+{
+    FILE *ptr_bin;
+    ptr_bin = fopen("infos_jogadas.bin", "a+b");
+
+    if (ptr_bin == NULL)
+    {
+        printf("\nOcorreu um erro ao tentar criar infos_jogadas.bin\n");
+        return 0;
+    }
+    else
+        return 1;
+
+    fclose(ptr_bin);
+}
+
+int grava_partida(char nome_bin[10], &p)
+{
+    fwrite(&p, sizeof(Partida), 1, nome_bin);
+
+    fclose(nome_bin);
+
+    //Falta retorno 1 se foi gravado com sucesso ou zero caso falha
+}
+
+int le_partida(char nome_bin[17], int partida)
+{
+    FILE *lp = fopen(nome_bin, "rb");
+
+    if (!lp)//verificar*
+    {
+        printf("Erro ao tentar ler o arquivo.\n");
+        break;
+    }
+
+}
+
+int main()
+{
+    int lin, col, jogadas = 9, vez = 1, men, gc = 0, ganhador = 0, valjog, part = 1;
+>>>>>>> Stashed changes
     char resp, jog1, jog2, nome_jog1[50], nome_jog2[50];
     bool controle = true;
 
@@ -348,12 +407,22 @@ int main()
         escolha_simb(&jog1, &jog2, nome_jog1, nome_jog2, &men);
         system("cls");
         imprime_velha();
+<<<<<<< Updated upstream
+=======
+        printf("Partida %d", part);
+        p.partida=part;
+>>>>>>> Stashed changes
 
         if (men == 1)
             grava_infos_jogadores(nome_jog1, &jog1, "Computador", &jog2);
         else
             grava_infos_jogadores(nome_jog1, &jog1, nome_jog2, &jog2);
 
+<<<<<<< Updated upstream
+=======
+        cria_binario();
+
+>>>>>>> Stashed changes
         do
         {
             // jogada com computador
@@ -372,7 +441,7 @@ int main()
                             sleep(1);
                             system("cls");
                             imprime_velha();
-                            printf("\nJogador %c\n", jog1);
+                            printf("\nJogador %s\n", nome_jog1);
                         }
                     } while (valjog != 0);
                     ganhador = verifica_ganhador(jog1);
@@ -418,7 +487,7 @@ int main()
                 }
                 else
                 {
-                    printf("\nJogador %c\n", jog2);
+                    printf("\nJogador %s\n", nome_jog2);
                     do
                     {
                         lin_col(&lin, &col);
@@ -429,7 +498,7 @@ int main()
                             sleep(1);
                             system("cls");
                             imprime_velha();
-                            printf("\nJogador %c\n", jog2);
+                            printf("\nJogador %s\n", nome_jog2);
                         }
                     } while (valjog != 0);
                     system("cls");
@@ -441,19 +510,31 @@ int main()
             }
 
             imprime_velha();
+            printf("Partida %d", part);
 
             if (ganhador == 1)
+            {
                 controle = false;
+                p.JogVelha = imprime_velha();
+                if (gc == 1)
+                    p.resultado = jog1;
+                else
+                    p.resultado = jog2;
+            }
             else
             {
                 controle = true;
                 if (jogadas == 0)
                     controle = false;
+                    p.JogVelha = imprime_velha();
+                    p.resultado = 'V';
                 else
                     controle = true;
             }
 
         } while (controle);
+
+        grava_partida(ptr_bin,&p);
 
         if (jogadas == 0)
             printf("\nQue pena! Ninguem ganhou!");
@@ -473,6 +554,7 @@ int main()
             vez = 1;
             gc = 0;
             ganhador = 0;
+            part++;
         }
     } while (resp == 's');
     return 0;
